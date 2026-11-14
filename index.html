@@ -14,12 +14,12 @@ nav{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;background:var(--p);bo
 nav button{display:flex;flex-direction:column;align-items:center;gap:2px;white-space:nowrap;background:var(--n);color:var(--m);border:0;padding:7px 12px;border-radius:10px;font-size:18px;cursor:pointer;flex:1}nav button small{font-size:10px;font-weight:700}nav button.on{background:var(--s);color:var(--a)}
 @media(min-width:701px){nav button{flex-direction:row;gap:6px;font-size:14px;justify-content:center}nav button small{font-size:13px}}
 @media(max-width:700px){nav{position:fixed;bottom:0;left:0;right:0;border-top:1px solid var(--b);border-bottom:0;padding-bottom:calc(8px + env(safe-area-inset-bottom));z-index:15}main{padding-bottom:96px}#bp{top:54px}}
-.card{background:var(--p);border:1px solid var(--b);border-radius:12px;padding:14px;margin-bottom:12px;animation:fadeIn 0.25s ease-out;position:relative}
+.card{background:var(--p);border:1px solid var(--b);border-radius:12px;padding:14px;margin-bottom:12px;animation:fadeIn .35s ease-out backwards;position:relative}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.dg{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px}
 .big{font-size:20px;font-weight:800}.m{color:var(--m);font-size:13px}.g{color:var(--g)}.r{color:var(--r)}
 input,select{background:var(--i);color:var(--t);border:1px solid var(--b);border-radius:8px;padding:9px;width:100%;font:inherit}
-.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;align-items:end}label{font-size:12px;color:var(--m)}
+.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:8px;align-items:end}label{font-size:12px;color:var(--m)}
 button.b{background:var(--a);color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px}
 button.b.s{background:var(--o);color:var(--t);border:1px solid var(--b)}button.x{background:none;border:0;color:var(--r);cursor:pointer;font-size:16px}
 .row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--o)}.row>.d{flex:1;min-width:0}.row .d b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -123,6 +123,25 @@ details.tb summary{cursor:pointer;color:var(--a);font-size:13px;font-weight:700;
  .qa{gap:6px}.qa button{font-size:11px;padding:10px 2px;min-width:0}
  #md{align-items:flex-start;padding:8px}#md .card{max-height:96vh}
 }
+
+/* ===== v4: fade-in nos cards, mobile e ajustes finais ===== */
+.hello,.qa,.sec,.chips,.car,.kpis>.card{animation:fadeIn .35s ease-out backwards}
+.kpis>.card.warn{animation:pulse 1.6s ease-in-out infinite}
+main>*:nth-child(2){animation-delay:.04s}main>*:nth-child(3){animation-delay:.08s}main>*:nth-child(4){animation-delay:.12s}main>*:nth-child(5){animation-delay:.16s}main>*:nth-child(6){animation-delay:.2s}main>*:nth-child(n+7){animation-delay:.24s}
+.kpis>.card:nth-child(2){animation-delay:.06s}.kpis>.card:nth-child(3){animation-delay:.12s}
+.nofade .card{animation:none}
+.f>*{min-width:0}.ac .top{flex-wrap:wrap;gap:6px}
+input[type=date],input[type=month]{min-width:0;max-width:100%}
+.hero .sub small+b+small{margin-top:2px;font-size:10px}
+@media(max-width:700px){
+ .f{display:grid;grid-template-columns:1fr!important;gap:12px}
+ .f>*{grid-column:1/-1!important;width:100%;min-width:0}
+ .f label{display:block;margin-bottom:4px}
+ input[type=date],input[type=month]{min-height:44px}
+ select{text-overflow:ellipsis}
+ .row{gap:6px}.card{padding:12px}
+}
+@media(max-width:380px){.hero .sub{grid-template-columns:1fr}}
 </style></head><body>
 <div id="top"><header><svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lgH" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lgH)"/><rect x="14" y="36" width="8" height="14" rx="2" fill="#fff" opacity=".6"/><rect x="28" y="28" width="8" height="22" rx="2" fill="#fff" opacity=".8"/><rect x="42" y="20" width="8" height="30" rx="2" fill="#fff"/><path d="M14 29l13-9 8 4 15-13" fill="none" stroke="#bbf7d0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Meu Controle Financeiro</b><button id="hs" hidden onclick="sync()"></button><button onclick="bo=!bo;render()" title="Vencimentos">🔔<i id="bn" hidden></i></button><button onclick="theme()" title="Tema claro/escuro">🌓</button></header>
 <nav id="nav"></nav></div><div id="bp"></div><div id="submenu"></div><main id="app"></main><div id="pr"></div><div id="md" onclick="if(event.target==this)mdClose()"></div>
@@ -158,7 +177,7 @@ const ncontas=()=>db.contas.filter(c=>c.tipo!='Cartão');
 const contasOptNC=s=>`<optgroup label="🏢 Contas e Cofrinhos">${ncontas().map(c=>`<option value="${c.id}"${c.id==s?' selected':''}>${cico(c)} ${E(c.nome)}</option>`).join('')}</optgroup>`;
 const cnl=l=>l.tipo=='T'?cn(l.conta)+' → '+cn(l.dest):cn(l.conta);
 const tn=l=>l.tipo=='R'?'Receita':l.tipo=='T'?'Transferência':'Despesa';
-const vcls=l=>l.tipo=='R'?'g':l.tipo=='T'?'':'r',vsg=l=>l.tipo=='R'?'+':l.tipo=='T'?'⇄ ':'-';
+const vcls=l=>l.tipo=='R'?'g':l.tipo=='T'?'':'r',vsg=l=>l.tipo=='R'?'+':l.tipo=='T'?'⇅ ':'-';
 const isCardL=l=>{const c=db.contas.find(x=>x.id==l.conta);return !!c&&c.tipo=='Cartão'};
 /* Saldo atual de uma conta (não-cartão): saldo inicial + receitas pagas - despesas pagas
    + transferências recebidas - enviadas - faturas de cartão pagas por esta conta. */
@@ -171,11 +190,13 @@ function saldoConta(c){const ini=db.inicio||'0000-00',hoje=ds(new Date()),first=
  return Math.round(v*100)/100}
 const sumSaldo=A=>Math.round(A.reduce((t,c)=>t+saldoConta(c),0)*100)/100;
 /* A pagar no mês = despesas pendentes fora de cartão + faturas de cartão que VENCEM no mês */
-function pendMes(m){gen(addM(m,-1));gen(m);const nc=db.lanc.filter(l=>l.tipo=='D'&&!l.pago&&l.data.startsWith(m)&&!isCardL(l)),fat=[];
- db.contas.filter(isCard).forEach(c=>{const g=invs(c);for(const k in g){const due=invDue(c,k);if(due.slice(0,7)!=m)continue;const it=g[k].filter(l=>!l.pago),v=tot(it);if(it.length&&v>0)fat.push({c,k,v,due})}});
- fat.sort((a,b)=>a.due<b.due?-1:1);return{nc,fat,total:Math.round((sum(nc)+fat.reduce((t,x)=>t+x.v,0))*100)/100}}
-const fatRow=x=>`<div class="row"><div class="fi">💳</div><div class="d"><b>Fatura ${E(x.c.nome)}</b><span class="m">vence ${dmy(x.due)} · ref. ${x.k.slice(5)}/${x.k.slice(2,4)}</span></div><b class="r">${mv(x.v)}</b><button class="b s" onclick="payInv('${x.c.id}','${x.k}')">Pagar</button></div>`;
-const accBox=c=>{if(!c||c.tipo=='Cartão')return'';const v=saldoConta(c);return`<div class="card" style="border-color:var(--a)"><div class="hd"><b>${cico(c)} ${E(c.nome)}</b><span>${c.tipo=='Investimento'?`<button class="b s" onclick="rendim('${c.id}')">📈 Atualizar rendimento</button> `:''}<button class="b s" onclick="goTransf('${c.id}')">⇄ Transferir</button></span></div><div class="m">Saldo atual</div><div class="big ${v<0?'r':'g'}">${mv(v)}</div></div>`};
+function pendMes(m){gen(addM(m,-1));gen(m);const cur=m==CUR,ini=db.inicio||'',
+ nc=db.lanc.filter(l=>{if(l.tipo!='D'||l.pago||isCardL(l))return false;const k=l.data.slice(0,7);return k==m||(cur&&!!ini&&k>=ini&&k<m)}),fat=[];
+ /* Faturas: no mês atual entram as já fechadas (vencidas ou não) e a do próprio mês; faturas de meses futuros ficam de fora. */
+ db.contas.filter(isCard).forEach(c=>{const g=invs(c);for(const k in g){if(cur?k>m:k!=m)continue;const it=g[k].filter(l=>!l.pago),v=tot(it);if(it.length&&v>0){const S=invStatus(c,k);fat.push({c,k,v,due:S.due,close:S.close,st:S.st})}}});
+ fat.sort((a,b)=>a.due<b.due?-1:a.due>b.due?1:0);return{nc,fat,total:Math.round((sum(nc)+fat.reduce((t,x)=>t+x.v,0))*100)/100}}
+const fatRow=x=>{const b={fechada:['no','Fechada'],aberta:['in','Aberta'],futura:['in','Futura']}[x.st]||['in','Aberta'];return`<div class="row"><div class="fi">💳</div><div class="d"><b>Fatura ${E(x.c.nome)}</b><span class="m"><span class="badge ${b[0]}">${b[1]}</span> vence ${dmy(x.due)} · ref. ${x.k.slice(5)}/${x.k.slice(2,4)}</span></div><b class="r">${mv(x.v)}</b><button class="b s" onclick="payInv('${x.c.id}','${x.k}')">Pagar</button></div>`};
+const accBox=c=>{if(!c||c.tipo=='Cartão')return'';const v=saldoConta(c);return`<div class="card" style="border-color:var(--a)"><div class="hd"><b>${cico(c)} ${E(c.nome)}</b><span>${c.tipo=='Investimento'?`<button class="b s" onclick="rendim('${c.id}')">📈 Atualizar rendimento</button> `:''}<button class="b s" onclick="goTransf('${c.id}')">⇅ Transferir</button></span></div><div class="m">Saldo atual</div><div class="big ${v<0?'r':'g'}">${mv(v)}</div></div>`};
 const limVis=(sel,d)=>{const e=$(sel),w=$(d);if(!e||!w)return;const c=db.contas.find(x=>x.id==e.value);w.style.display=c&&c.tipo=='Cartão'?'':'none'};
 
 const sum=a=>a.reduce((s,l)=>s+l.valor,0);
@@ -196,8 +217,9 @@ function goSub(t){subOn=false;$('submenu').className='';tab=t;render()}
 function nav(n){ym=addM(ym,n);render()}
 function monthBar(){return`<div class="hd"><button class="b s" onclick="nav(-1)">‹</button><span style="text-align:center"><b style="text-transform:capitalize">${mname(ym)}</b>${ym!=CUR?` <button class="b s" onclick="ym=CUR;render()">↩ Mês atual</button>`:''}</span><button class="b s" onclick="nav(1)">›</button></div>`}
 
-function item(l,showConta=1){
- if(l.tipo=='T')return`<div class="row"><span style="font-size:20px;margin-right:4px" title="Transferência interna">⇄</span><div class="d"><b>${E(l.desc)}</b><span class="m">${dmy(l.data)} · ${E(cn(l.conta))} → ${E(cn(l.dest))}</span></div><b style="color:var(--a)">${fm(l.valor)}</b><button class="x" style="color:var(--m)" onclick="edit('${l.id}')">✎</button><button class="x" onclick="del('${l.id}')">✕</button></div>`;
+function item(l,showConta=1,ctx=''){
+ if(l.tipo=='T'){const out=!!ctx&&l.conta==ctx,inn=!!ctx&&l.dest==ctx,cl=out?'r':inn?'g':'',sgn=out?'-':inn?'+':'',mid=out?'Enviada para '+cn(l.dest):inn?'Recebida de '+cn(l.conta):cn(l.conta)+' → '+cn(l.dest);
+  return`<div class="row"><div class="fi" title="Transferência interna">⇅</div><div class="d"><b>${E(l.desc)}</b><span class="m">${dmy(l.data)} · Transferência · ${E(mid)}</span></div><b class="${cl}"${cl?'':' style="color:var(--a)"'}>${sgn}${fm(l.valor)}</b><button class="x" style="color:var(--m)" onclick="edit('${l.id}')">✎</button><button class="x" onclick="del('${l.id}')">✕</button></div>`}
  const c=db.contas.find(x=>x.id==l.conta);const isC=c&&c.tipo=='Cartão';
  const flg=isC?`<span style="font-size:18px;margin-right:4px;" title="Lançamento no cartão (pago no fechamento)">💳</span>`:`<input type="checkbox" class="ck" ${l.pago?'checked':''} onchange="tog('${l.id}')" title="Pago / recebido">`;
  return`<div class="row">${flg}<div class="d"><b>${E(l.desc)}</b><span class="m">${l.data.split('-').reverse().join('/')} · ${E(l.cat)}${showConta?' · '+E(cn(l.conta)):''}</span></div><b class="${l.tipo=='R'?'g':'r'}">${l.tipo=='R'?'+':'-'}${fm(l.valor)}</b><button class="x" style="color:var(--m)" onclick="edit('${l.id}')">✎</button><button class="x" onclick="del('${l.id}')">✕</button></div>`;
@@ -206,8 +228,8 @@ function item(l,showConta=1){
 let hide=localStorage.getItem('fin_hide')=='1';
 const mv=v=>hide?'R$ ••••':fm(v);
 function togHide(){hide=!hide;localStorage.setItem('fin_hide',hide?'1':'0');render()}
-const CICON={'Salário':'💰','Outras receitas':'💵','Estorno':'↩️','Moradia':'🏠','Financiamento':'🏦','Contas fixas':'💡','Mercado':'🛒','Alimentação':'🍽️','Transporte':'🚗','Saúde':'💊','Lazer':'🎉','Educação':'🎓','Assinaturas':'📺','Compras':'🛍️','Impostos':'🧾','Investimentos':'📈','Rendimentos':'🐖','Transferência':'⇄'};
-function greet(){const d=new Date(),h=d.getHours(),w=d.getDay(),n=((user&&user.name)?user.name:(localStorage.getItem('fin_name')||'')).split(' ')[0],s=h<5?'Boa madrugada':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
+const CICON={'Salário':'💰','Outras receitas':'💵','Estorno':'↩️','Moradia':'🏠','Financiamento':'🏦','Contas fixas':'💡','Mercado':'🛒','Alimentação':'🍽️','Transporte':'🚗','Saúde':'💊','Lazer':'🎉','Educação':'🎓','Assinaturas':'📺','Compras':'🛍️','Impostos':'🧾','Investimentos':'📈','Rendimentos':'🐖','Transferência':'⇅'};
+function greet(){const d=new Date(),h=d.getHours(),w=d.getDay(),n=((user&&user.name)?user.name:(localStorage.getItem('fin_name')||'')).split(' ')[0],s=h>=5&&h<12?'Bom dia':h>=12&&h<18?'Boa tarde':'Boa noite';
  return`<div class="hello"><h1>${s}${n?', '+E(n):''}! 👋</h1><p>${w==0||w==6?'Hora de relaxar, mas de olho nos gastos!':'Veja como está o seu dinheiro hoje.'}</p></div>`}
 const nf=v=>(+v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 /* --- Fonte única dos cálculos (usada por Início, Dashboard, Extrato, PDF e Projeção) --- */
@@ -227,7 +249,7 @@ function cardBox(c){if(!c||c.tipo!='Cartão')return'';const d=cardData(c);
 function cardsBox(){const sm=cartoesResumo();return sm.n?cardHead('💳 Todos os cartões',sm,{f:'soma das faturas já fechadas',o:'soma das faturas em aberto',l:'soma dos limites livres'}):''}
 function invLine(c,k){const S=invStatus(c,k),t={paga:['ok','Fatura paga'],fechada:['no','Fatura fechada'],aberta:['in','Fatura em aberto'],futura:['in','Fatura futura']}[S.st];
  return`<p class="m"><span class="badge ${t[0]}">${t[1]}</span> ${k.slice(5)}/${k.slice(2,4)} · fecha em <b>${dmy(S.close)}</b> · vence em <b>${dmy(S.due)}</b><br>Total da fatura <b>${fm(S.total)}</b>${S.v>0&&S.st!='paga'?` · a pagar <b>${fm(S.v)}</b> <button class="b" onclick="payInv('${c.id}','${k}')">Pagar fatura</button>`:''}</p>`}
-function stInfo(l,cache){const c=db.contas.find(x=>x.id==l.conta);
+function stInfo(l,cache){if(l.tipo=='T')return{show:0,cls:'ok',t:'Efetivada'};const c=db.contas.find(x=>x.id==l.conta);
  if(isCard(c)){const k=invKey(l),S=cache[l.conta+k]||(cache[l.conta+k]=invStatus(c,k));return{show:1,cls:S.st=='paga'?'ok':S.st=='fechada'?'no':'in',t:'Fatura '+k.slice(5)+'/'+k.slice(2,4)+' · '+{paga:'paga',fechada:'fechada',aberta:'em aberto',futura:'futura'}[S.st]}}
  return l.pago?{show:0,cls:'ok',t:l.tipo=='R'?'Recebido':'Pago'}:{show:1,cls:'no',t:l.tipo=='R'?'A receber':'Pendente'}}
 /* --- Séries mensais e gráfico interativo --- */
@@ -244,7 +266,7 @@ function chartRD(ms,o){o=o||{};const W=360,H=150,B=118,mx=Math.max(1,...ms.flatM
 let onlyPend=false;
 function resumoHtml(L,R,D,pend){
  const cr=cartoesResumo(),cartoes=db.contas.filter(c=>c.tipo=='Cartão'),
- PM=pendMes(ym),cofre=sumSaldo(ncontas().filter(c=>c.tipo=='Investimento')),emContas=sumSaldo(ncontas().filter(c=>c.tipo!='Investimento')),real=Math.round((emContas+cofre)*100)/100,pNC=Math.round(sum(PM.nc)*100)/100,pFT=Math.round(PM.fat.reduce((t,x)=>t+x.v,0)*100)/100,consol=Math.round((real-PM.total)*100)/100,
+ PM=pendMes(ym),PH=ym==CUR?PM:pendMes(CUR),cofre=sumSaldo(ncontas().filter(c=>c.tipo=='Investimento')),emContas=sumSaldo(ncontas().filter(c=>c.tipo!='Investimento')),real=Math.round((emContas+cofre)*100)/100,pNC=Math.round(sum(PH.nc)*100)/100,pFT=Math.round(PH.fat.reduce((t,x)=>t+x.v,0)*100)/100,consol=Math.round((real-pNC-pFT)*100)/100,
  saldoM=R-D,pctD=R?Math.min(100,D/R*100):(D>0?100:0),dv=due(),prox=dv.filter(x=>x.d<=2),tx=R>0?Math.max(0,Math.min(1,saldoM/R)):0,C=2*Math.PI*26,
  hoje=ds(new Date()),pl=[...PM.nc].sort((a,b)=>a.data<b.data?-1:a.data>b.data?1:0),
  rec=[...db.lanc].filter(l=>l.data<=hoje).sort((a,b)=>a.data<b.data?1:a.data>b.data?-1:0).slice(0,5),
@@ -253,15 +275,15 @@ function resumoHtml(L,R,D,pend){
  cardsH=cartoes.length?cartoes.map(c=>{const d=cardData(c),u=d.u,lim=d.lim,ab=d.o?d.o.v:Math.max(0,u);
   return`<div class="fc" onclick="this.classList.toggle('flip')"><div><div class="ff"><div class="fd"><b>💳 ${E(c.nome)}</b><small>toque p/ virar</small></div><div><small>Fatura aberta</small><div style="font-size:20px;font-weight:800">${mv(ab)}</div></div><div>${lim?`<div class="bar"><i style="width:${Math.min(100,Math.max(0,u/lim*100))}%"></i></div><small>${mv(lim-u)} disponível de ${mv(lim)}</small>`:'<small>Defina o limite em Cartões</small>'}</div></div>
   <div class="fb"><b>💳 ${E(c.nome)}</b><div class="fd"><span>Fechamento</span><b>${d.o?dmy(d.o.close):(c.fech?'dia '+c.fech:'–')}</b></div><div class="fd"><span>Vencimento</span><b>${d.o?dmy(d.o.due):(c.venc?'dia '+c.venc:'–')}</b></div>${d.f?`<div class="fd"><span>Fechada (vence ${dmy(d.f.due)})</span><b>${mv(d.f.v)}</b></div>`:'<small>Sem fatura fechada pendente</small>'}</div></div></div>`}).join(''):`<div class="card m" style="flex:1">Nenhum cartão cadastrado. <a style="color:var(--a);cursor:pointer;font-weight:700" onclick="go('cart')">Cadastrar agora</a></div>`;
- return greet()+setupCard()+`<div class="hero"><div class="top"><span>Saldo final previsto · ${mname(ym)}</span><button class="eye" onclick="togHide()" title="${hide?'Exibir':'Ocultar'} valores">${hide?'🙈':'👁️'}</button></div><div class="val">${mv(consol)}</div><div class="fml">Contas e cofrinho ${mv(real)} − contas pendentes ${mv(pNC)} − faturas do mês ${mv(pFT)}</div><div class="sub"><div><small>🏦 Em contas</small><b>${mv(emContas)}</b></div><div><small>🐖 Cofrinho</small><b>${mv(cofre)}</b></div><div><small>📅 A pagar no mês (−)</small><b>${mv(PM.total)}</b></div></div></div>
- <div class="qa"><button class="main" onclick="go('lanc')"><span>＋</span>Lançar</button><button onclick="goTransf()"><span>⇄</span>Transferir</button><button onclick="go('ext')"><span>📄</span>Extrato</button><button onclick="go('cart')"><span>💳</span>Cartões / Contas</button></div>`
+ return greet()+setupCard()+`<div class="hero"><div class="top"><span>Saldo disponível · ${mname(CUR)}</span><button class="eye" onclick="togHide()" title="${hide?'Exibir':'Ocultar'} valores">${hide?'🙈':'👁️'}</button></div><div class="val">${mv(consol)}</div><div class="fml">= contas e cofrinhos − despesas pendentes − faturas do mês (meses futuros ficam de fora)</div><div class="sub"><div><small>🏦 Contas e cofrinhos (+)</small><b>${mv(real)}</b>${cofre?`<small>🐖 ${mv(cofre)} no cofrinho</small>`:''}</div><div><small>⏳ Despesas pendentes (−)</small><b>${mv(pNC)}</b></div><div><small>💳 Faturas do mês (−)</small><b>${mv(pFT)}</b></div></div></div>
+ <div class="qa"><button class="main" onclick="go('lanc')"><span>＋</span>Lançar</button><button onclick="goTransf()"><span>⇅</span>Transferir</button><button onclick="go('ext')"><span>📄</span>Extrato</button><button onclick="go('cart')"><span>💳</span>Cartões / Contas</button></div>`
  +monthBar()+`<div class="kpis">
  <div class="card kpi"><div class="m">Saldo do mês</div><div class="big ${saldoM<0?'r':'g'}">${mv(saldoM)}</div><div class="th"><i style="width:${pctD}%;background:${saldoM<0?'var(--r)':'var(--g)'}"></i></div><div class="m">${mv(D)} gastos de ${mv(R)}</div></div>
  <div class="card kpi click${prox.length?' warn':''}" onclick="onlyPend=true;render();document.getElementById('mov').scrollIntoView({behavior:'smooth'})"><div class="m">A pagar no mês · toque p/ filtrar</div><div class="big">${mv(pend)}</div><div class="m">${prox.length?'🔔 '+prox.length+' vencendo em até 48h':'Sem vencimento próximo'}</div></div>
  <div class="card kpi"><div class="m">Taxa de economia</div><div class="ring"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="var(--o)" stroke-width="7"/><circle cx="32" cy="32" r="26" fill="none" stroke="${saldoM<0?'var(--r)':'var(--g)'}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(tx*C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/><text x="32" y="36" font-size="13" font-weight="800" text-anchor="middle" fill="var(--t)">${R?Math.round(saldoM/R*100):0}%</text></svg><div class="m">da receita<br>poupada</div></div></div></div>
  <div class="card"><b>Receitas × despesas</b> <span class="m">últimos 6 meses · toque ou passe o mouse nas barras</span>${chartRD(ms)}</div>
  <div class="sec" id="mov"><b>${onlyPend?'Pendentes de '+mname(ym):'Últimas movimentações'}</b><a onclick="go('ext')">Ver extrato</a></div>
- <div class="chips"><button class="b ${onlyPend?'':'s'}" style="width:100%;padding:12px" onclick="onlyPend=!onlyPend;render()">⏳ ${onlyPend?'Mostrar todas as movimentações':'Ver Pagar do Mês'}${pl.length+PM.fat.length?' ('+(pl.length+PM.fat.length)+' · '+mv(pend)+')':''}</button></div>
+ <div class="chips"><button class="b ${onlyPend?'':'s'}" style="width:100%;padding:12px" onclick="onlyPend=!onlyPend;render()">⏳ ${onlyPend?'Mostrar todas as movimentações':'Ver A Pagar do Mês'}${pl.length+PM.fat.length?' ('+(pl.length+PM.fat.length)+' · '+mv(pend)+')':''}</button></div>
  <div class="card" style="padding:4px 14px">${onlyPend?(pl.length||PM.fat.length?pl.map(l=>item(l,1)).join('')+PM.fat.map(fatRow).join('')+`<p class="m" style="margin:10px 0">Total pendente no mês: <b>${fm(pend)}</b></p>`:'<p class="m">Nenhuma despesa pendente neste mês. 🎉</p>'):(rec.map(l=>{const p=!l.pago&&!invKey(l);return`<div class="row${p?' pend':''}"><div class="fi">${CICON[l.cat]||'🧾'}</div><div class="d"><b>${E(l.desc)}</b><span class="m">${dmy(l.data)} · ${E(l.cat)}${p?' · ⏳ pendente':''}</span></div><b class="${vcls(l)}">${hide?'••••':vsg(l)+fm(l.valor)}</b></div>`}).join('')||'<p class="m">Nenhuma movimentação ainda.</p>')}</div>
  <div class="sec"><b>Meus cartões</b><a onclick="go('cart')">Ver todos</a></div><div class="car">${cardsH}</div>
  <div class="card"><b>Gastos por categoria${onlyPend?' (pendentes)':''}</b> <span class="m">(toque para definir limite)</span>${Object.entries(bc).sort((a,b)=>b[1]-a[1]).map(([c,v])=>{const lim=db.orc[c],p=lim?v/lim*100:v/mx*100;return`<div style="margin-top:10px;cursor:pointer" onclick="setOrc('${E(c)}')"><div style="display:flex;justify-content:space-between"><span>${E(c)}</span><span class="${lim&&v>lim?'r':''}">${mv(v)}${lim?' / '+mv(lim):''}</span></div><div class="bar"><i style="width:${Math.min(100,p)}%;${lim&&v>lim?'background:var(--r)':''}"></i></div></div>`}).join('')||'<p class="m">Sem despesas neste filtro.</p>'}</div>`+projCard()}
@@ -286,7 +308,7 @@ function render(){
   if(cardFiltro=='pend')LL=LL.filter(l=>!l.pago);else if(cardFiltro=='pago')LL=LL.filter(l=>l.pago);
   const pendCard=LL.filter(l=>!l.pago);
   h=monthBar()+`<div class="card"><div class="f"><div><label>Nome</label><input id="cnm" placeholder="Ex.: Nubank"></div><div><label>Tipo</label><select id="cty"><option value="Cartão">Cartão</option><option value="Conta">Conta</option><option value="Investimento">Cofrinho / Investimento</option></select></div><div><label>Limite</label><input id="cl" inputmode="decimal"></div><div><label>Fechamento (dia)</label><input id="cf2" type="number" min="1" max="31"></div><div><label>Vencimento (dia)</label><input id="cv" type="number" min="1" max="31"></div><button class="b" onclick="addConta()">Adicionar</button></div></div><div class="grid">${db.contas.map(c=>ctaCard(c,sel)).join('')}</div>
-  ${cfg?cardBox(c0):accBox(c0)}<div class="card"><div class="hd"><b>${E(c0.nome)}</b><div style="display:flex;gap:6px"><select onchange="cardFiltro=this.value;render()" style="width:140px"><option value="todos"${sl('todos',cardFiltro)}>Todos os lançamentos</option><option value="pend"${sl('pend',cardFiltro)}>A pagar</option><option value="pago"${sl('pago',cardFiltro)}>Pagos</option></select><button class="b s" onclick="contaEd('${c0.id}')">✎ Editar</button></div></div>${cfg?invLine(c0,ym):''} ${LL.map(l=>item(l,0)).join('')||'<p class="m">Sem movimentos neste filtro.</p>'}</div>`}
+  ${cfg?cardBox(c0):accBox(c0)}<div class="card"><div class="hd"><b>${E(c0.nome)}</b><div style="display:flex;gap:6px"><select onchange="cardFiltro=this.value;render()" style="width:140px"><option value="todos"${sl('todos',cardFiltro)}>Todos os lançamentos</option><option value="pend"${sl('pend',cardFiltro)}>A pagar</option><option value="pago"${sl('pago',cardFiltro)}>Pagos</option></select><button class="b s" onclick="contaEd('${c0.id}')">✎ Editar</button></div></div>${cfg?invLine(c0,ym):''} ${LL.map(l=>item(l,0,cfg?'':c0.id)).join('')||'<p class="m">Sem movimentos neste filtro.</p>'}</div>`}
  if(tab=='imp')h=impHtml();
  if(tab=='manual')h=manualHtml();
  if(tab=='ajustes')h=ajustesHtml();
@@ -304,10 +326,10 @@ function manualHtml(){
   <li><b>💳 Inteligência nos Cartões</b>: Lançamentos em cartões não exigem checkbox manual de pago. Elas fecham junto com a fatura e se liberam ao pagar a mesma!</li>
   <li><b>📊 Gráficos Interativos</b>: Agora você pode passar o mouse (ou pressionar) sobre os gráficos para visualizar os valores exatos instantaneamente.</li>
   <li><b>📂 PDF Organizado</b>: Os relatórios gerados em PDF separam automaticamente as suas movimentações de forma lógica, primeiro por conta/cartão e depois dividindo Entradas de Saídas.</li>
-  <li><b>⇄ Transferências</b>: em Lançar, escolha o tipo <b>Transferência</b>, informe origem, destino, valor e data. Ela só move saldo entre contas e <b>não</b> entra como receita nem despesa no Início, Dashboard, Extrato ou PDF.</li>
+  <li><b>⇅ Transferências</b>: em Lançar, escolha o tipo <b>Transferência</b>, informe origem, destino, valor e data. No extrato de uma conta específica, a transferência enviada vira <b>saída (−)</b> e a recebida vira <b>entrada (+)</b>, para o saldo bater com o banco. Na visão geral (Início, Dashboard e extrato de "Todas"), as transferências internas são <b>anuladas</b> e não inflam receitas nem despesas. Elas aparecem com a categoria Transferência, ícone ⇅ e sem o check de pago.</li>
   <li><b>🐖 Cofrinho / Investimento</b>: cadastre em Ajustes como "Novo cofrinho". Para registrar o rendimento, use <b>Atualizar rendimento</b> e informe o saldo que aparece no banco; a diferença vira uma receita da categoria Rendimentos.</li>
   <li><b>💳 Pagar fatura</b>: ao pagar, escolha a conta que paga. O valor sai dessa conta e o limite do cartão é liberado.</li>
-  <li><b>🏠 Saldo final previsto</b>: (saldo real em contas e cofrinhos) − (despesas diretas pendentes do mês) − (faturas de cartão que vencem no mês selecionado). Faturas de outros meses não entram.</li>
+  <li><b>🏠 Saldo disponível</b>: (saldo de todas as contas e cofrinhos) − (despesas diretas pendentes: Pix, boleto e afins) − (faturas de cartão fechadas e a do mês corrente). Faturas de meses futuros não entram. O botão <b>Ver A Pagar do Mês</b> lista exatamente o que está sendo descontado.</li>
  </ul></div>`;
 }
 /* ===== Assistente de primeira configuração ===== */
@@ -467,16 +489,24 @@ const dmy=d=>d.split('-').reverse().join('/'),sg=l=>l.tipo=='R'?l.valor:-l.valor
 function extF(){return db.lanc.filter(l=>(!ef.conta||l.conta==ef.conta||l.dest==ef.conta)&&(!ef.tipo||(ef.tipo=='E'?isEst(l):l.tipo==ef.tipo))&&(!ef.nat||kind(l)==ef.nat)&&(!ef.st||(ef.st=='p')==!!l.pago)&&(!ef.q||(l.desc+l.cat).toLowerCase().includes(ef.q.toLowerCase()))&&(!ef.de||l.data>=ef.de)&&(!ef.ate||l.data<=ef.ate)).sort((a,b)=>a.data<b.data?-1:a.data>b.data?1:0)}
 
 function extList(){
- const a=extF();exl=a;const cSel=db.contas.find(c=>c.id==ef.conta),isC=cSel&&cSel.tipo=='Cartão',T=totais(a),en=T.R,es=T.Es,sa=T.Dg,res=en+es-sa,cache={};
- const rows=a.map(l=>{const si=stInfo(l,cache);return`<tr><td>${dmy(l.data)}</td><td>${E(l.desc)}${si.show?` <span class="badge ${si.cls}">${si.t}</span>`:''}</td><td>${E(l.cat)}</td><td>${E(cnl(l))}</td><td class="${vcls(l)}">${vsg(l)}${fm(l.valor)}</td></tr>`});
+ const a=extF();exl=a;const cSel=db.contas.find(c=>c.id==ef.conta),isC=!!cSel&&cSel.tipo=='Cartão',ind=!!cSel&&!isC,T=totais(a),
+ trs=a.filter(l=>l.tipo=='T'),tIn=ind?trs.filter(l=>l.dest==cSel.id):[],tOut=ind?trs.filter(l=>l.conta==cSel.id):[],
+ en=T.R+sum(tIn),es=T.Es,sa=T.Dg+sum(tOut),res=en+es-sa,cache={};
+ /* Conta específica: transferência enviada = saída (−), recebida = entrada (+). Visão geral: transferências são anuladas nos totais. */
+ const rows=a.map(l=>{
+  if(l.tipo=='T'){const out=ind&&l.conta==cSel.id,inn=ind&&l.dest==cSel.id,cl=out?'r':inn?'g':'',sgn=out?'-':inn?'+':'⇅ ',cont=out?'Enviada para '+cn(l.dest):inn?'Recebida de '+cn(l.conta):cnl(l);
+   return`<tr><td>${dmy(l.data)}</td><td><span title="Transferência interna">⇅</span> ${E(l.desc)}</td><td>Transferência</td><td>${E(cont)}</td><td class="${cl}"${cl?'':' style="color:var(--a)"'}>${sgn}${fm(l.valor)}</td></tr>`}
+  const si=stInfo(l,cache);return`<tr><td>${dmy(l.data)}</td><td>${E(l.desc)}${si.show?` <span class="badge ${si.cls}">${si.t}</span>`:''}</td><td>${E(l.cat)}</td><td>${E(cnl(l))}</td><td class="${vcls(l)}">${vsg(l)}${fm(l.valor)}</td></tr>`});
  const k=(t,v,c='')=>`<div class="card"><div class="m">${t}</div><div class="big ${c}">${fm(v)}</div></div>`;
- const head=isC?cardBox(cSel):(!ef.conta?cardsBox():accBox(cSel)),trs=a.filter(l=>l.tipo=='T'),trNote=trs.length?`<p class="m">⇄ ${trs.length} transferência(s) interna(s) somando ${fm(sum(trs))}. Não contam como receita nem despesa.</p>`:'';
+ const head=isC?cardBox(cSel):(!ef.conta?cardsBox():accBox(cSel)),
+ trNote=!trs.length||isC?'':ind?`<p class="m">⇅ ${tIn.length} transferência(s) recebida(s) (${fm(sum(tIn))}) contam como entrada e ${tOut.length} enviada(s) (${fm(sum(tOut))}) como saída, para o saldo da conta bater.</p>`:`<p class="m">⇅ ${trs.length} transferência(s) interna(s) somando ${fm(sum(trs))}. Na visão geral elas são anuladas e não contam como receita nem despesa.</p>`;
  const tiles=isC?k('Compras',sa,'r')+k('Estornos / créditos',es,'g')+k('Líquido do período',res,res<0?'r':'g'):k('Entradas',en,'g')+k('Estornos',es,'g')+k('Saídas',sa,'r')+k('Resultado do período',res,res<0?'r':'g');
  return`${head}<div class="grid">${tiles}</div>${trNote}<div class="card sc"><table><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Conta</th><th>Valor</th></tr>${rows.slice(-500).join('')||'<tr><td colspan="5" class="m">Nenhuma movimentação neste filtro.</td></tr>'}</table></div>`;
 }
-const extU=()=>{$('el').innerHTML=extList()},sl=(a,b)=>a==b?' selected':'';
+const extU=()=>{const e=$('el');e.classList.add('nofade');e.innerHTML=extList()},sl=(a,b)=>a==b?' selected':'';
 function extP(n){const m=n==1?addM(CUR,-1):CUR;ef.de=n==2?'':m+'-01';ef.ate=n==2?'':dIn(m,31);render()}
-function expExt(){dl('extrato.csv','\ufeffData;Tipo;Categoria;Descrição;Conta;Valor;Pago\n'+exl.map(l=>[l.data,tn(l),l.cat,l.desc,cnl(l),String(l.valor).replace('.',','),l.pago?'Sim':'Não'].join(';')).join('\n'),'text/csv')}
+function expExt(){const tnx=l=>l.tipo!='T'||!ef.conta?tn(l):l.conta==ef.conta?'Transferência enviada':'Transferência recebida',vx=l=>(l.tipo=='T'&&ef.conta&&l.conta==ef.conta?'-':'')+String(l.valor).replace('.',',');
+ dl('extrato.csv','\ufeffData;Tipo;Categoria;Descrição;Conta;Valor;Pago\n'+exl.map(l=>[l.data,tnx(l),l.cat,l.desc,cnl(l),vx(l),l.tipo=='T'?'':(l.pago?'Sim':'Não')].join(';')).join('\n'),'text/csv')}
 function extHtml(){return`<div class="card"><div class="f"><div><label>Conta / cartão</label><select onchange="ef.conta=this.value;extU()"><option value="">Todas</option>${contasOpt(ef.conta)}</select></div><div><label>De</label><input type="date" value="${ef.de}" onchange="ef.de=this.value;extU()"></div><div><label>Até</label><input type="date" value="${ef.ate}" onchange="ef.ate=this.value;extU()"></div><div><label>Tipo</label><select onchange="ef.tipo=this.value;extU()"><option value="">Todos</option><option value="R"${sl('R',ef.tipo)}>Receitas</option><option value="D"${sl('D',ef.tipo)}>Despesas</option><option value="E"${sl('E',ef.tipo)}>Estornos</option><option value="T"${sl('T',ef.tipo)}>Transferências</option></select></div><div><label>Natureza</label><select onchange="ef.nat=this.value;extU()"><option value="">Todas</option><option value="F"${sl('F',ef.nat)}>Fixas</option><option value="P"${sl('P',ef.nat)}>Parceladas</option><option value="A"${sl('A',ef.nat)}>Avulsas</option></select></div><div><label>Status</label><select onchange="ef.st=this.value;extU()"><option value="">Todos</option><option value="p"${sl('p',ef.st)}>Pagos / recebidos</option><option value="n"${sl('n',ef.st)}>Pendentes</option></select></div><div><label>Buscar</label><input value="${E(ef.q)}" placeholder="🔍 descrição ou categoria" oninput="ef.q=this.value;extU()"></div></div><p style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap"><button class="b s" onclick="extP(0)">Este mês</button> <button class="b s" onclick="extP(1)">Mês anterior</button> <button class="b s" onclick="extP(2)">Tudo</button> <button class="b" onclick="pdfExt()">📄 Gerar PDF</button> <button class="b s" onclick="expExt()">Exportar CSV</button></p></div><div id="el">${extList()}</div>`}
 let locked=!!localStorage.getItem('fin_pin'),hid=0;
 const logo=(z,id)=>`<svg width="${z}" height="${z}" viewBox="0 0 64 64"><defs><linearGradient id="lg${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg${id})"/><rect x="14" y="36" width="8" height="14" rx="2" fill="#fff" opacity=".6"/><rect x="28" y="28" width="8" height="22" rx="2" fill="#fff" opacity=".8"/><rect x="42" y="20" width="8" height="30" rx="2" fill="#fff"/><path d="M14 29l13-9 8 4 15-13" fill="none" stroke="#bbf7d0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -570,16 +600,22 @@ function saveRec(id){const r=db.rec.find(x=>x.id==id),v=num($('gv').value),s=$('
 
 function pdfExt(){
  const a=extF();if(!a.length)return alert('Nenhuma movimentação para exportar no filtro.');
- const cSel=db.contas.find(c=>c.id==ef.conta),cardSel=!!cSel&&cSel.tipo=='Cartão',sm=cartoesResumo(cardSel?ef.conta:''),T=totais(a),res=T.R+T.Es-T.Dg,cache={},
+ const cSel=db.contas.find(c=>c.id==ef.conta),cardSel=!!cSel&&cSel.tipo=='Cartão',ind=!!cSel&&!cardSel,sm=cartoesResumo(cardSel?ef.conta:''),T=totais(a),
+ trs=a.filter(l=>l.tipo=='T'),tIn=ind?trs.filter(l=>l.dest==cSel.id):[],tOut=ind?trs.filter(l=>l.conta==cSel.id):[],
+ en=T.R+sum(tIn),sa=T.Dg+sum(tOut),res=en+T.Es-sa,cache={},
  per=(ef.de||ef.ate)?(ef.de?dmy(ef.de):'início')+' a '+(ef.ate?dmy(ef.ate):'hoje'):'Todo o período',
- tbl=(it,sg)=>it.length?`<table><thead><tr><th style="width:62px">Data</th><th>Descrição</th><th>Categoria</th><th>Situação</th><th class="v">Valor</th></tr></thead><tbody>${it.map(l=>`<tr><td>${dmy(l.data)}</td><td>${E(l.desc)}${isEst(l)?' <i>(estorno)</i>':''}</td><td>${E(l.cat)}</td><td>${E(stInfo(l,cache).t)}</td><td class="v ${sg>0?'in':'out'}">${sg>0?'+':'-'}${fm(l.valor)}</td></tr>`).join('')}</tbody></table>`:'<p class="none">Sem lançamentos.</p>',
- trT=(it,c)=>`<table><thead><tr><th style="width:62px">Data</th><th>Descrição</th><th>Movimento</th><th class="v">Valor</th></tr></thead><tbody>${it.map(l=>{const inn=l.dest==c.id;return`<tr><td>${dmy(l.data)}</td><td>${E(l.desc)}</td><td>${inn?'Recebida de '+E(cn(l.conta)):'Enviada para '+E(cn(l.dest))}</td><td class="v ${inn?'in':'out'}">${inn?'+':'-'}${fm(l.valor)}</td></tr>`}).join('')}</tbody></table>`,
- grupos=db.contas.filter(c=>a.some(l=>l.conta==c.id||l.dest==c.id)).map(c=>{const it=a.filter(l=>l.conta==c.id),tr=a.filter(l=>l.tipo=='T'&&(l.conta==c.id||l.dest==c.id)),t=totais(it),rs=t.R+t.Es-t.Dg,d=c.tipo=='Cartão'?cardData(c):null;
-  return`<section class="grp"><div class="gh"><div><b>${cico(c)} ${E(c.nome)}</b><span>${c.tipo=='Investimento'?'Cofrinho / Investimento':E(c.tipo)}</span></div><div class="gt"><span>Entradas <b class="in">${fm(t.R)}</b></span><span>Estornos <b class="in">${fm(t.Es)}</b></span><span>Saídas <b class="out">${fm(t.Dg)}</b></span><span>Resultado <b>${fm(rs)}</b></span></div></div>${d?`<div class="gc">Fatura fechada <b>${fm(d.f?d.f.v:0)}</b>${d.f?' (vence '+dmy(d.f.due)+')':''} · Fatura aberta <b>${fm(d.o?d.o.v:Math.max(0,d.u))}</b>${d.o?' (fecha '+dmy(d.o.close)+')':''} · Limite disponível <b>${d.lim?fm(d.lim-d.u):'–'}</b></div>`:`<div class="gc">Saldo atual da conta <b>${fm(saldoConta(c))}</b></div>`}<h4>Entradas</h4>${tbl(it.filter(l=>l.tipo=='R'),1)}<h4>Saídas</h4>${tbl(it.filter(l=>l.tipo=='D'),-1)}${tr.length?`<h4>Transferências internas · não contam como receita nem despesa</h4>${trT(tr,c)}`:''}</section>`}).join('');
+ byDate=(x,y)=>x.data<y.data?-1:x.data>y.data?1:0,
+ row=(l,c,sg)=>{if(l.tipo=='T'){const inn=l.dest==c.id;return`<tr><td>${dmy(l.data)}</td><td>⇅ ${E(l.desc)}</td><td>Transferência</td><td>${inn?'Recebida de '+E(cn(l.conta)):'Enviada para '+E(cn(l.dest))}</td><td class="v ${inn?'in':'out'}">${inn?'+':'-'}${fm(l.valor)}</td></tr>`}
+  return`<tr><td>${dmy(l.data)}</td><td>${E(l.desc)}${isEst(l)?' <i>(estorno)</i>':''}</td><td>${E(l.cat)}</td><td>${E(stInfo(l,cache).t)}</td><td class="v ${sg>0?'in':'out'}">${sg>0?'+':'-'}${fm(l.valor)}</td></tr>`},
+ tbl=(it,c,sg)=>it.length?`<table><thead><tr><th style="width:62px">Data</th><th>Descrição</th><th>Categoria</th><th>Situação</th><th class="v">Valor</th></tr></thead><tbody>${it.map(l=>row(l,c,sg)).join('')}</tbody></table>`:'<p class="none">Sem lançamentos.</p>',
+ grupos=db.contas.filter(c=>a.some(l=>l.conta==c.id||l.dest==c.id)).map(c=>{
+  const it=a.filter(l=>l.conta==c.id&&l.tipo!='T'),tI=a.filter(l=>l.tipo=='T'&&l.dest==c.id),tO=a.filter(l=>l.tipo=='T'&&l.conta==c.id),t=totais(it),rc=t.R+sum(tI),sd=t.Dg+sum(tO),rs=rc+t.Es-sd,d=c.tipo=='Cartão'?cardData(c):null,
+  ents=[...it.filter(l=>l.tipo=='R'),...tI].sort(byDate),sai=[...it.filter(l=>l.tipo=='D'),...tO].sort(byDate);
+  return`<section class="grp"><div class="gh"><div><b>${cico(c)} ${E(c.nome)}</b><span>${c.tipo=='Investimento'?'Cofrinho / Investimento':E(c.tipo)}</span></div><div class="gt"><span>Receitas <b class="in">${fm(rc)}</b></span><span>Estornos <b class="in">${fm(t.Es)}</b></span><span>Saídas <b class="out">${fm(sd)}</b></span><span>Resultado <b>${fm(rs)}</b></span></div></div>${d?`<div class="gc">Fatura fechada <b>${fm(d.f?d.f.v:0)}</b>${d.f?' (vence '+dmy(d.f.due)+')':''} · Fatura aberta <b>${fm(d.o?d.o.v:Math.max(0,d.u))}</b>${d.o?' (fecha '+dmy(d.o.close)+')':''} · Limite disponível <b>${d.lim?fm(d.lim-d.u):'–'}</b></div>`:`<div class="gc">Saldo atual da conta <b>${fm(saldoConta(c))}</b></div>`}<h4>Receitas</h4>${tbl(ents,c,1)}<h4>Saídas</h4>${tbl(sai,c,-1)}</section>`}).join('');
  $('pr').innerHTML=`<div class="st"><div class="st-top"><div><small>Meu Controle Financeiro</small><h1>Extrato</h1></div><div class="st-meta"><b>Período:</b> ${per}<br><b>Conta:</b> ${cSel?E(cSel.nome):'Todas as contas e cartões'}<br><b>Emitido em:</b> ${new Date().toLocaleString('pt-BR')}</div></div>
- ${(!cSel||cardSel)&&sm.n?`<div class="st-sum"><div><small>Fatura fechada${cardSel?'':' (todos os cartões)'}</small><b class="out">${fm(sm.fe)}</b></div><div><small>Fatura aberta${cardSel?'':' (todos os cartões)'}</small><b>${fm(sm.ab)}</b></div><div><small>Limite disponível</small><b class="in">${sm.hasL?fm(sm.dp):'–'}</b></div></div>`:''}
- <div class="st-tot"><div><small>Entradas</small><b class="in">${fm(T.R)}</b></div><div><small>Estornos</small><b class="in">${fm(T.Es)}</b></div><div><small>Saídas</small><b class="out">${fm(T.Dg)}</b></div><div><small>Resultado do período</small><b class="${res<0?'out':'in'}">${fm(res)}</b></div></div>
- ${grupos}<div class="st-foot">Documento gerado automaticamente pelo app. Os valores refletem os lançamentos filtrados. Transferências internas não entram nos totais.</div></div>`;
+ ${sm.n?`<div class="st-sum"><div><small>Fatura fechada${cardSel?' · '+E(cSel.nome):' (todos os cartões)'}</small><b class="out">${fm(sm.fe)}</b></div><div><small>Fatura aberta${cardSel?' · '+E(cSel.nome):' (todos os cartões)'}</small><b>${fm(sm.ab)}</b></div><div><small>Limite disponível</small><b class="in">${sm.hasL?fm(sm.dp):'–'}</b></div></div>`:''}
+ <div class="st-tot"><div><small>Receitas</small><b class="in">${fm(en)}</b></div><div><small>Estornos</small><b class="in">${fm(T.Es)}</b></div><div><small>Saídas</small><b class="out">${fm(sa)}</b></div><div><small>Resultado do período</small><b class="${res<0?'out':'in'}">${fm(res)}</b></div></div>
+ ${grupos}<div class="st-foot">Documento gerado automaticamente pelo app. Os valores refletem os lançamentos filtrados. Transferências (⇅) aparecem em cada conta como entrada ou saída; na visão de todas as contas elas se anulam e não entram nos totais.</div></div>`;
  setTimeout(()=>print(),150);
 }
 let dfl={conta:'',nat:'',cat:''};
@@ -598,9 +634,9 @@ function dashHtml(L0){const F=L0.filter(flt),Es=F.filter(isEst),Ds=F.filter(l=>l
 
 function ltChg(){const T=$('lt').value=='T',a=$('la'),pv=a.value;$('wc').style.display=T?'none':'';$('wp').style.display=T?'none':'';$('wd').style.display=T?'':'none';$('lbA').textContent=T?'Conta de origem':'Conta / cartão';a.innerHTML=T?contasOptNC(pv):contasOpt(pv);
  if(T){const dd=$('ldst');dd.innerHTML=contasOptNC();const o=ncontas().find(c=>c.id!=a.value);if(o)dd.value=o.id}
- $('vz').textContent=T?'⇄ Transferência: só move saldo entre contas, não conta como receita nem despesa.':'⌨️ Enter avança para o próximo campo e, no último, salva.'}
+ $('vz').textContent=T?'⇅ Transferência: só move saldo entre contas, não conta como receita nem despesa.':'⌨️ Enter avança para o próximo campo e, no último, salva.'}
 function goTransf(id){tab='lanc';subOn=false;$('submenu').className='';render();$('lt').value='T';ltChg();if(id)$('la').value=id;const o=ncontas().find(c=>c.id!=$('la').value);if(o)$('ldst').value=o.id;window.scrollTo(0,0)}
-function editT(id){const l=db.lanc.find(x=>x.id==id);mdShow(`<b>⇄ Editar transferência</b><div class="f" style="margin:10px 0"><div><label>Origem</label><select id="tfo">${contasOptNC(l.conta)}</select></div><div><label>Destino</label><select id="tfd">${contasOptNC(l.dest)}</select></div><div><label>Valor</label><input id="tfv" inputmode="decimal" value="${String(l.valor).replace('.',',')}"></div><div><label>Data</label><input id="tfdt" type="date" value="${l.data}"></div><div style="grid-column:1/-1"><label>Descrição</label><input id="tfs" value="${E(l.desc)}"></div></div><button class="b" onclick="saveT('${id}')">Salvar</button> <button class="b s" onclick="mdClose()">Cancelar</button> <button class="x" onclick="mdClose();del('${id}')">🗑 Excluir</button>`)}
+function editT(id){const l=db.lanc.find(x=>x.id==id);mdShow(`<b>⇅ Editar transferência</b><div class="f" style="margin:10px 0"><div><label>Origem</label><select id="tfo">${contasOptNC(l.conta)}</select></div><div><label>Destino</label><select id="tfd">${contasOptNC(l.dest)}</select></div><div><label>Valor</label><input id="tfv" inputmode="decimal" value="${String(l.valor).replace('.',',')}"></div><div><label>Data</label><input id="tfdt" type="date" value="${l.data}"></div><div style="grid-column:1/-1"><label>Descrição</label><input id="tfs" value="${E(l.desc)}"></div></div><button class="b" onclick="saveT('${id}')">Salvar</button> <button class="b s" onclick="mdClose()">Cancelar</button> <button class="x" onclick="mdClose();del('${id}')">🗑 Excluir</button>`)}
 function saveT(id){const l=db.lanc.find(x=>x.id==id),v=num($('tfv').value),o=$('tfo').value,dt=$('tfd').value,d=$('tfdt').value;if(!(v>0)||!d)return alert('Informe valor e data.');if(!o||!dt||o==dt)return alert('Escolha contas de origem e destino diferentes.');Object.assign(l,{conta:o,dest:dt,valor:Math.round(v*100)/100,data:d,desc:$('tfs').value.trim()||'Transferência',t:0});save();mdClose();render()}
 function rendim(id){const c=db.contas.find(x=>x.id==id);mdShow(`<b>📈 Atualizar saldo · ${E(c.nome)}</b><p class="m">O app calcula <b>${fm(saldoConta(c))}</b>. Informe o saldo atual (como aparece no banco). A diferença é lançada como <b>Rendimento</b> (receita) nesta conta.</p><div class="f" style="margin:10px 0"><div><label>Saldo atual (R$)</label><input id="rd_v" inputmode="decimal"></div><div><label>Data</label><input id="rd_d" type="date" value="${ds(new Date())}"></div></div><button class="b" onclick="saveRend('${id}')">Registrar</button> <button class="b s" onclick="mdClose()">Cancelar</button>`)}
 function saveRend(id){const c=db.contas.find(x=>x.id==id),real=num($('rd_v').value),d=$('rd_d').value;if(isNaN(real)||!d)return alert('Informe o saldo atual e a data.');const dif=Math.round((real-saldoConta(c))*100)/100;if(dif==0)return alert('O saldo já está batendo. 👍');if(dif<0)return alert('O saldo informado é menor que o calculado. Se houve uma saída, lance-a como despesa ou transferência, ou use "Conferir saldo" em Ajustes.');db.lanc.push({id:uid(),data:d,tipo:'R',cat:'Rendimentos',desc:'Rendimento '+c.nome,valor:dif,conta:id,pago:true,ref:null});save();mdClose();render()}
